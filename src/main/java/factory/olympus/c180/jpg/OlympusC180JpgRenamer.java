@@ -1,6 +1,7 @@
 package factory.olympus.c180.jpg;
 
 import factory.Renamer;
+import model.CliArgs;
 import model.Template;
 import org.springframework.stereotype.Component;
 import utility.RenamerUtility;
@@ -20,18 +21,18 @@ public class OlympusC180JpgRenamer implements Renamer {
     }
 
     @Override
-    public int rename(Path dir) throws Exception {
-        validateOlympusC180Dir(dir);
+    public int rename(CliArgs args) throws Exception {
+        validateOlympusC180Dir(args.dir());
 
         int folderNumber = RenamerUtility.INSTANCE
-            .extractPrefix(dir, Template.OLYMPUS_C180.folderPattern());
+            .extractPrefix(args.dir(), Template.OLYMPUS_C180.folderPattern());
 
         var files = RenamerUtility.INSTANCE
-            .listByExtension(dir, Template.OLYMPUS_C180.acceptedExtensions());
+            .listByExtension(args.dir(), Template.OLYMPUS_C180.acceptedExtensions());
 
         if (files.isEmpty()) {
             System.out.printf("No accepted file found inside dir %s, accepted: %s",
-                dir,
+                args.dir(),
                 Template.OLYMPUS_C180.acceptedExtensions());
             return 0;
         }
@@ -52,9 +53,10 @@ public class OlympusC180JpgRenamer implements Renamer {
         );
 
         RenamerUtility.INSTANCE.checkConflicts(oldNameToNewNameMap);
-        RenamerUtility.INSTANCE.renames(oldNameToNewNameMap);
 
-        System.out.printf("\nRename completed (directory %s).", dir.getFileName());
+        RenamerUtility.INSTANCE.renames(oldNameToNewNameMap, args.dryRun());
+
+        System.out.printf("\nRename completed (directory %s).", args.dir().getFileName());
         return oldNameToNewNameMap.size();
     }
 

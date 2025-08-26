@@ -23,7 +23,7 @@ public class RenamerFactory {
         var renamer = renamers.get(fileType.toLowerCase());
         return Optional.ofNullable(renamer)
             .orElseThrow(() -> new IllegalArgumentException(
-                "type %s not supported, aviable: %s"
+                "Type %s not supported, available: %s"
                 .formatted(fileType, renamers.keySet())));
     }
 

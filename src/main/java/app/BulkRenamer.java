@@ -29,7 +29,7 @@ public class BulkRenamer implements CommandLineRunner {
 
         var count = renamerFactory
                 .get(cliArgs.template())
-                .rename(cliArgs.dir());
+                .rename(cliArgs);
         System.out.printf("\nRinominati %d file.", count);
     }
 }

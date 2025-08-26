@@ -150,7 +150,12 @@ public enum RenamerUtility {
      *
      * @param oldNameToNewNameMap map of original file path -> new file path
      */
-    public void renames(Map<Path, Path> oldNameToNewNameMap) {
+    public void renames(Map<Path, Path> oldNameToNewNameMap, boolean dryRun) {
+        if (dryRun) {
+            System.out.printf("\nDry run enabled, no files were renamed");
+            return;
+        }
+
         var tmpMap = new LinkedHashMap<Path, Path>();
 
         oldNameToNewNameMap.forEach((oldPath, newPath) -> {

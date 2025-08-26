@@ -28,6 +28,7 @@ public class ArgsParser {
 
         Path dir = null;
         String template = null;
+        boolean dryRun = false;
 
         var iterator = argsAsList.listIterator();
         while (iterator.hasNext()) {
@@ -36,6 +37,7 @@ public class ArgsParser {
             switch (arg) {
                 case "--dir" -> dir = Paths.get(requireArg(iterator, "--dir required an argument"));
                 case "-t", "--template" -> template = requireArg(iterator, "-t, --template required an argument");
+                case "--dry-run" -> dryRun = true;
                 default -> {
                     System.err.printf("Unknown property %s", arg);
                     help();
@@ -46,11 +48,11 @@ public class ArgsParser {
 
         requireNonNull(dir);
         if (!Files.isDirectory(dir))
-            throw new  IllegalArgumentException("not a valid path");
+            throw new  IllegalArgumentException("Path not valid");
 
         template = template != null ? template.toLowerCase() : null;
 
-        return new CliArgs(dir, template);
+        return new CliArgs(dir, template, dryRun);
     }
 
     private String requireArg(ListIterator<String> iterator, String errorMessage) {
@@ -61,10 +63,10 @@ public class ArgsParser {
 
     private void help() {
         System.out.println("""
-            Uso:
+            Usage:
               java -jar renamer-spring.jar --dir <path/to/dir> --template <olympus_c180>
 
-            Esempi:
+            Example:
               --dir "C:/olympus/120OLYMP" --template olympus_c180
             """);
     }
