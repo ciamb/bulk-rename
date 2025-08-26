@@ -4,7 +4,7 @@ import java.nio.file.Path;
 
 public record CliArgs(
         Path dir,
-        String fileType // optional
+        String template // optional
 ) {
     public static Builder builder() {
         return new Builder();
@@ -12,21 +12,20 @@ public record CliArgs(
 
     public static final class Builder {
         private Path dir;
-        private String fileType;
+        private String template;
 
         public Builder dir(Path dir) {
             this.dir = dir;
             return this;
         }
 
-        public Builder fileType(String fileType) {
-            this.fileType = fileType;
+        public Builder template(String template) {
+            this.template = template;
             return this;
         }
 
         public CliArgs build() {
-            return new CliArgs(dir, fileType);
+            return new CliArgs(dir, template);
         }
     }
-
 }

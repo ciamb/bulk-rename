@@ -3,59 +3,69 @@ package cli;
 import model.CliArgs;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.ListIterator;
+
+import static java.util.Objects.requireNonNull;
 
 @Component
 public class ArgsParser {
 
     public CliArgs parse(String[] args) {
-        if (args.length == 0
-                || Arrays.asList(args).contains("--help")) {
-            printHelp();
+        if (args.length == 0) {
+            help();
+            return null;
+        }
+
+        var argsAsList = Arrays.asList(args);
+        if (argsAsList.contains("--help")) {
+            help();
             return null;
         }
 
         Path dir = null;
-        String type = null;
+        String template = null;
 
-        for (int i = 0; i < args.length; i++) {
-            String opt = args[i];
-            switch (opt) {
-                case "--dir" -> dir = Paths.get(requireArg(args, ++i, "--dir richiede un percorso"));
-                case "--type" -> type = requireArg(args, ++i, "--type richiede un valore (es. olympus_c180)");
+        var iterator = argsAsList.listIterator();
+        while (iterator.hasNext()) {
+            // prendo l'argomento
+            var arg = iterator.next();
+            switch (arg) {
+                case "--dir" -> dir = Paths.get(requireArg(iterator, "--dir required an argument"));
+                case "-t", "--template" -> template = requireArg(iterator, "-t, --template required an argument");
                 default -> {
-                    System.err.println("Opzione sconosciuta: " + opt);
-                    printHelp();
+                    System.err.printf("Unknown property %s", arg);
+                    help();
                     return null;
                 }
             }
         }
 
-        if (dir == null) throw new IllegalArgumentException("--dir obbligatorio");
-        if (type == null) throw new IllegalArgumentException("--type obbligatorio");
+        requireNonNull(dir);
+        if (!Files.isDirectory(dir))
+            throw new  IllegalArgumentException("not a valid path");
 
-        return new CliArgs(dir, type.toLowerCase());
+        template = template != null ? template.toLowerCase() : null;
+
+        return new CliArgs(dir, template);
     }
 
-    private String requireArg(String[] args, int idx, String err) {
-        if (idx >= args.length) throw new IllegalArgumentException(err);
-        return args[idx];
+    private String requireArg(ListIterator<String> iterator, String errorMessage) {
+        if (!iterator.hasNext())
+            throw new IllegalArgumentException(errorMessage);
+        return iterator.next();
     }
 
-    private void printHelp() {
+    private void help() {
         System.out.println("""
             Uso:
-              java -jar renamer-spring.jar --dir <cartella> --type <png|xls|...> --pi <1..99>
+              java -jar renamer-spring.jar --dir <path/to/dir> --template <olympus_c180>
 
             Esempi:
-              --dir "C:/foto" --type png --pi 7
-              --dir "/home/ciamb/docs" --type xls --pi 12
-
-            Note:
-              - --pi è l'indice primario formattato a 2 cifre (01..99).
-              - Il formato del nome è: P1 + <pi_2cifre> + <seq_4cifre> + estensione.
+              --dir "C:/olympus/120OLYMP" --template olympus_c180
             """);
     }
 }

@@ -14,7 +14,7 @@ public class RenamerFactory {
     public RenamerFactory(List<Renamer> renamers) {
         this.renamers = renamers.stream()
             .collect(Collectors.toUnmodifiableMap(
-        r -> r.type().toLowerCase(),
+        r -> r.template().toLowerCase(),
         r -> r
             ));
     }
