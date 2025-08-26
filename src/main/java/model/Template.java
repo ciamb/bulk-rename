@@ -7,8 +7,8 @@ public enum Template {
     GENERIC(
             1,
             1,
-            ".*",
-            List.of(".*"),
+            "",
+            List.of(""),
             null
     ),
     OLYMPUS_C180(

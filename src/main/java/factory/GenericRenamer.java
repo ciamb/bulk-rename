@@ -27,7 +27,8 @@ public class GenericRenamer implements Renamer {
             throw new IllegalArgumentException("--name is required for generic renamer");
         }
 
-        var files = RenamerUtility.INSTANCE.listByExtension(args.dir(), List.of(""));
+        var files = RenamerUtility.INSTANCE.listByExtension(
+                args.dir(), Template.GENERIC.acceptedExtensions());
         if (files.isEmpty()) {
             System.out.printf("No files found in %s", args.dir());
             return 0;
@@ -66,7 +67,7 @@ public class GenericRenamer implements Renamer {
     private String getExtension(Path file) {
         var fileName = file.getFileName().toString();
         int dot = fileName.lastIndexOf('.');
-        return dot >= 0 ? fileName.substring(dot) : "";
+        return dot >= 0 ? fileName.substring(dot) : Template.GENERIC.defaultExtension();
     }
 
     private String zpad(int value, int seqLength) {
