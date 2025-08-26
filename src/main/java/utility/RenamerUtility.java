@@ -30,9 +30,6 @@ public enum RenamerUtility {
      * @apiNote directory name "110OLYMP" will extract 110 as int
      */
     public int extractPrefix(Path dir, Pattern folderPattern) {
-        if (!Files.isDirectory(dir)) {
-            throw new IllegalArgumentException("Invalid directory: %s".formatted(dir));
-        }
         var dirName = dir.getFileName().toString();
         var m = folderPattern.matcher(dirName);
         if (!m.matches()) {
@@ -114,6 +111,15 @@ public enum RenamerUtility {
             var applyName = newNameSequenceFn.apply(num++, file);
             map.put(file, file.resolveSibling(applyName));
         }
+
+        System.out.printf("Preview rename (%d file):", map.size());
+        map.forEach(
+            (oldName, newName) -> System.out.printf(
+                "\n%s -> %s",
+                oldName.getFileName(),
+                newName.getFileName())
+        );
+
         return map;
     }
 

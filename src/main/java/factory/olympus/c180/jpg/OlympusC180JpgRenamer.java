@@ -6,6 +6,7 @@ import model.Template;
 import org.springframework.stereotype.Component;
 import utility.RenamerUtility;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -44,14 +45,6 @@ public class OlympusC180JpgRenamer implements Renamer {
             Template.OLYMPUS_C180.seqStart(),
             (seqNum, file) -> "P" + folderNumber + zpad(seqNum) + Template.OLYMPUS_C180.defaultExtension());
 
-        System.out.printf("Preview rename (%d file):", oldNameToNewNameMap.size());
-        oldNameToNewNameMap.forEach(
-            (oldName, newName) -> System.out.printf(
-                "\n%s -> %s",
-                oldName.getFileName(),
-                newName.getFileName())
-        );
-
         RenamerUtility.INSTANCE.checkConflicts(oldNameToNewNameMap);
 
         RenamerUtility.INSTANCE.renames(oldNameToNewNameMap, args.dryRun());
@@ -61,6 +54,9 @@ public class OlympusC180JpgRenamer implements Renamer {
     }
 
     private void validateOlympusC180Dir(Path dir) {
+        if (!Files.isDirectory(dir)) {
+            throw new IllegalArgumentException("Invalid directory: %s".formatted(dir));
+        }
         var folderName = dir.getFileName().toString();
         var m = Template.OLYMPUS_C180.folderPattern().matcher(folderName);
         if (!m.matches()) {

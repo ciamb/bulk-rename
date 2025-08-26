@@ -2,10 +2,13 @@ package model;
 
 import java.nio.file.Path;
 
+import static java.util.Objects.requireNonNull;
+
 public record CliArgs(
         Path dir,
         String template, // optional
-        boolean dryRun
+        boolean dryRun,
+        String prefix
 ) {
     public static Builder builder() {
         return new Builder();
@@ -15,14 +18,15 @@ public record CliArgs(
         private Path dir;
         private String template;
         private boolean dryRun = false;
+        private String prefix;
 
         public Builder dir(Path dir) {
-            this.dir = dir;
+            this.dir = requireNonNull(dir);
             return this;
         }
 
         public Builder template(String template) {
-            this.template = template;
+            this.template = requireNonNull(template).toLowerCase();
             return this;
         }
 
@@ -31,8 +35,13 @@ public record CliArgs(
             return this;
         }
 
+        public Builder prefix(String prefix) {
+            this.prefix = requireNonNull(prefix);
+            return this;
+        }
+
         public CliArgs build() {
-            return new CliArgs(dir, template, dryRun);
+            return new CliArgs(dir, template, dryRun, prefix);
         }
     }
 }

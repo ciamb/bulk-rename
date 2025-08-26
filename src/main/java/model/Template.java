@@ -4,6 +4,13 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public enum Template {
+    GENERIC(
+            1,
+            1,
+            ".*",
+            List.of(".*"),
+            null
+    ),
     OLYMPUS_C180(
             1,
             4,
